@@ -28,3 +28,9 @@
 #define SPLIT_TRANSPORT_MIRROR             // If LED_MATRIX_KEYPRESSES or LED_MATRIX_KEYRELEASES is enabled, you also will want to enable SPLIT_TRANSPORT_MIRROR
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 100  // limits maximum brightness of LEDs (max 255). Higher may cause the controller to crash.
 #define SPLIT_WPM_ENABLE
+
+#define RGBLIGHT_EFFECT_STATIC_LIGHT   // allow static mode only
+#define RGBLIGHT_LIMIT_VAL 120          // brightness cap (0–255)
+#define WS2812_DI_PIN D3
+#define RGBLIGHT_LED_COUNT 12
+#define RGBLIGHT_SPLIT { 6, 6 }        // Number of LEDs on each half

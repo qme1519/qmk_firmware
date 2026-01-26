@@ -17,6 +17,7 @@
 #define TAPPING_TERM 200
 
 #include "cat.h"
+#include "rgb_matrix.h"
 
 enum layer_names {
     _QWERTY,
@@ -200,6 +201,7 @@ static void print_status_narrow(void) {
      // Host Keyboard LED Status
      led_t led_state = host_keyboard_led_state();
      oled_write_ln_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
+     oled_write_ln_P(PSTR("-----"), false);
      oled_write_ln_P(PSTR("Key:"), false);
     if (current_mods) {
         if (current_mods & MOD_MASK_SHIFT) oled_write_ln_P(PSTR("Shift"), false);
@@ -245,10 +247,42 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-#include "rgblight.h"
-
 void keyboard_post_init_user(void) {
-    rgblight_enable_noeeprom();                 // turn RGB on
-    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
-    rgblight_sethsv_noeeprom(HSV_CYAN);          // pick your color
+    // Turn RGB Matrix on
+    rgb_matrix_enable();
+    
+    // Set initial effect mode
+    // RGB Matrix effects are defined in config.h with ENABLE_RGB_MATRIX_* defines
+    // Use RGB_MATRIX_EFFECT_* constants to set the mode
+    // See https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects for full list
+    
+    // For animated color-changing effects, use one of these:
+    // rgb_matrix_mode(RGB_MATRIX_CYCLE_LEFT_RIGHT);  // Horizontal rainbow cycling
+    // rgb_matrix_mode(RGB_MATRIX_RAINBOW_MOVING_CHEVRON);  // Moving chevron
+    // rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);                // Full rainbow cycle
+    // rgb_matrix_mode(RGB_MATRIX_RAINBOW_BEACON);          // Rainbow beacon
+    // rgb_matrix_mode(RGB_MATRIX_BREATHING);               // Breathing effect
+    rgb_matrix_mode(RGB_MATRIX_SOLID_REACTIVE);             // Static single color
+    
+    // Set initial color (HSV: Hue, Saturation, Value/Brightness)
+    // Hue: 0-255 (0=red, 43=yellow, 85=green, 128=cyan, 170=blue, 213=magenta)
+    // Saturation: 0-255 (0=white/gray, 255=full color)
+    // Value: 0-255 (0=off, 255=full brightness)
+    rgb_matrix_sethsv(HSV_RED);  // Change this to your preferred color
+}
+
+// Common HSV color presets you can use:
+// HSV_RED, HSV_ORANGE, HSV_YELLOW, HSV_GREEN, HSV_CYAN, HSV_BLUE, HSV_PURPLE, HSV_PINK, HSV_WHITE
+// Or create custom: rgb_matrix_sethsv(128, 255, 120); // (hue, saturation, brightness)
+
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case MT(MOD_LALT, KC_S):
+        case MT(MOD_LGUI, KC_A):
+        case MT(MOD_RALT, KC_L):
+        case MT(MOD_RGUI, KC_SCLN):  // Fixed: KC_SCLN not KC_SEMICOLON
+            return TAPPING_TERM + 100;  // 200ms + 1000ms = 1200ms total
+        default:
+            return TAPPING_TERM;
+    }
 }

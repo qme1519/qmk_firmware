@@ -264,66 +264,66 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
     return true;
 }
 
-void keyboard_post_init_kb(void) {
-    if (!is_keyboard_master()) {
-        render_logo();
-    } else {
-        oled_set_cursor(0, 0);
-        oled_write("Layer", false);
-        render_spacer(5);
-        oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
+// void keyboard_post_init_kb(void) {
+//     if (!is_keyboard_master()) {
+//         render_logo();
+//     } else {
+//         oled_set_cursor(0, 0);
+//         oled_write("Layer", false);
+//         render_spacer(5);
+//         oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
 
-        oled_set_cursor(0, 4);
-        oled_write_ln("Key", false);
-        render_spacer(3);
-        oled_advance_page(false);
-        oled_write_ln("None", false);
+//         oled_set_cursor(0, 4);
+//         oled_write_ln("Key", false);
+//         render_spacer(3);
+//         oled_advance_page(false);
+//         oled_write_ln("None", false);
 
-        oled_set_cursor(0, 8);
-        oled_write_ln("OS", false);
-        render_spacer(2);
-        oled_advance_page(false);
-        oled_write_ln("Wait", false);
+//         oled_set_cursor(0, 8);
+//         oled_write_ln("OS", false);
+//         render_spacer(2);
+//         oled_advance_page(false);
+//         oled_write_ln("Wait", false);
 
-        oled_set_cursor(0, 12);
-        oled_write_ln("Rate", false);
-        render_spacer(4);
-    }
-    keyboard_post_init_user();
-}
+//         oled_set_cursor(0, 12);
+//         oled_write_ln("Rate", false);
+//         render_spacer(4);
+//     }
+//     keyboard_post_init_user();
+// }
 
-layer_state_t layer_state_set_kb(layer_state_t state) {
-    state = layer_state_set_user(state);
-    oled_set_cursor(0, 2);
-    oled_write_ln(layer_string(get_highest_layer(state)), false);
-    return state;
-}
+// layer_state_t layer_state_set_kb(layer_state_t state) {
+//     state = layer_state_set_user(state);
+//     oled_set_cursor(0, 2);
+//     oled_write_ln(layer_string(get_highest_layer(state)), false);
+//     return state;
+// }
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     current_keycode = keycode;
     return process_record_user(keycode, record);
 };
 
-uint16_t loop_rate = 0;
-void     housekeeping_task_kb(void) {
-    if (is_keyboard_master()) {
-        static uint32_t     loop_count = 0;
-        static fast_timer_t loop_time  = 0;
-        loop_count++;
-        if (timer_elapsed_fast(loop_time) > 1000) {
-            loop_time  = timer_read_fast();
-            loop_rate  = loop_count > UINT16_MAX ? UINT16_MAX : loop_count;
-            loop_count = 0;
-            if (is_oled_on()) {
-                oled_set_cursor(0, 14);
-                oled_write(depad_str(get_u16_str(loop_rate, ' '), ' '), false);
-            }
-        }
-    }
-    if (is_oled_on() && last_input_activity_elapsed() > OLED_TIMEOUT) {
-        oled_off();
-    }
-}
+// uint16_t loop_rate = 0;
+// void     housekeeping_task_kb(void) {
+//     if (is_keyboard_master()) {
+//         static uint32_t     loop_count = 0;
+//         static fast_timer_t loop_time  = 0;
+//         loop_count++;
+//         if (timer_elapsed_fast(loop_time) > 1000) {
+//             loop_time  = timer_read_fast();
+//             loop_rate  = loop_count > UINT16_MAX ? UINT16_MAX : loop_count;
+//             loop_count = 0;
+//             if (is_oled_on()) {
+//                 oled_set_cursor(0, 14);
+//                 oled_write(depad_str(get_u16_str(loop_rate, ' '), ' '), false);
+//             }
+//         }
+//     }
+//     if (is_oled_on() && last_input_activity_elapsed() > OLED_TIMEOUT) {
+//         oled_off();
+//     }
+// }
 
 void oled_reinit_slave(void) {
     oled_init(OLED_ROTATION_270);
