@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#define TAPPING_TERM 200
 
 #include "cat.h"
 #include "rgb_matrix.h"
@@ -22,7 +21,8 @@
 enum layer_names {
     _QWERTY,
     _SPECIAL,
-    _SYSTEM
+    _SYSTEM,
+    _QWERTY_GAMING
 };
 
 static uint16_t current_keycode = KC_NO;
@@ -40,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
  * |      |   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |RShift|
  * `-----------------------------------------/       /     \      \-----------------------------------------'
- *            |      |      |      |      | /Tab (1)/       \Enter \  |Space(2)|      |      |      |
+ *            |      |      |      | Bspc | /Tab (1)/       \Enter \  |Space(2)|      |      | Game |
  *            |      |      |      |      |/       /         \      \ |        |      |      |      |
  *            `----------------------------------'           '------''---------------------------'
  */
@@ -48,9 +48,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_QWERTY] = LAYOUT(
     KC_ESC,     KC_1,               KC_2,               KC_3,               KC_4,               KC_5,                               KC_6,               KC_7,               KC_8,               KC_9,                 KC_0,        KC_MINS,
     KC_TAB,     KC_Q,               KC_W,               KC_E,               KC_R,               KC_T,                               KC_Y,               KC_U,               KC_I,               KC_O,                 KC_P,        KC_BACKSLASH,
-    CW_TOGG,    MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_D), MT(MOD_LCTL, KC_F), KC_G,                               KC_H,               MT(MOD_RCTL, KC_J), MT(MOD_RSFT, KC_K), MT(MOD_RALT, KC_L),   MT(MOD_RGUI, KC_SCLN),   KC_QUOT,
+    CW_TOGG,    MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_D), MT(MOD_LCTL, KC_F), KC_G,                               KC_H,               MT(MOD_RCTL, KC_J), MT(MOD_RSFT, KC_K), MT(MOD_LALT, KC_L),   MT(MOD_RGUI, KC_SCLN),   KC_QUOT,
     KC_NO,      KC_Z,               KC_X,               KC_C,               KC_V,               KC_B,      KC_MUTE,       KC_MPLY,  KC_N,               KC_M,               KC_COMM,            KC_DOT,               KC_SLSH,     KC_NO,
-                                    KC_NO,              KC_NO,              KC_NO,              KC_BSPC,   LT(1, KC_TAB), KC_ENT,   LT(2, KC_SPC),      KC_NO,              KC_NO,              KC_NO    
+                                    KC_NO,              KC_NO,              KC_NO,              KC_BSPC,   LT(1, KC_TAB), KC_ENT,   LT(2, KC_SPC),      KC_NO,              KC_NO,              TG(3)    
 ),
 
 /*
@@ -99,11 +99,36 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO,      KC_NO,    KC_NO,     KC_NO,    KC_DEL,       KC_NO,                            KC_PAGE_DOWN,     KC_LEFT,                                   KC_DOWN,                       KC_RIGHT,       KC_NO,     KC_NO,
     KC_NO,      KC_NO,    KC_NO,     KC_NO,    KC_NO,        KC_NO,     KC_NO,         KC_NO,  KC_NO,            C(S(KC_TAB)),                              C(KC_TAB),                     KC_NO,          KC_NO,     KC_NO,
                           KC_NO,     KC_NO,    KC_NO,        KC_NO,     KC_NO,         KC_NO,  KC_NO,            KC_NO,                                     KC_NO,                         KC_NO    
-)
+),
+
+/*
+ * QWERTY for gaming
+ * ,-----------------------------------------.                    ,-----------------------------------------.
+ * | ESC  |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  -   |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | Tab  |      |   Q  |   W  |   E  |   R  |                    |   Y  |   U  |   I  |   O  |   P  |   \  |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | Caps |      |   A  |   S  |   D  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
+ * |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
+ * |      |      |   Z  |   X  |   C  |   V  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |RShift|
+ * `-----------------------------------------/       /     \      \-----------------------------------------'
+ *            |      |      |      |Lshift| /Lctrcl /       \Enter \  |Space(2)|      |      | Game |
+ *            |      |      |      |      |/       /         \      \ |        |      |      |      |
+ *            `----------------------------------'           '------''---------------------------'
+ */
+
+[_QWERTY_GAMING] = LAYOUT(
+    KC_ESC,     KC_1,               KC_2,               KC_3,               KC_4,               KC_5,                               KC_6,               KC_7,               KC_8,               KC_9,                 KC_0,        KC_MINS,
+    KC_TAB,     KC_NO,              KC_Q,               KC_W,               KC_E,               KC_R,                               KC_Y,               KC_U,               KC_I,               KC_O,                 KC_P,        KC_BACKSLASH,
+    CW_TOGG,    KC_NO,              KC_A,               KC_S,               KC_D,               KC_F,                               KC_H,               MT(MOD_RCTL, KC_J), MT(MOD_RSFT, KC_K), MT(MOD_LALT, KC_L),   MT(MOD_RGUI, KC_SCLN),   KC_QUOT,
+    KC_NO,      KC_NO,              KC_Z,               KC_X,               KC_C,               KC_V,      KC_MUTE,       KC_MPLY,  KC_N,               KC_M,               KC_COMM,            KC_DOT,               KC_SLSH,     KC_NO,
+                                    KC_NO,              KC_NO,              KC_NO,              KC_LSFT,   KC_LCTL,       KC_ENT,   LT(2, KC_SPC),      KC_NO,              KC_NO,              TG(3)     
+),
 };
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
+    { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
     { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
     { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
     { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
@@ -194,6 +219,8 @@ static void print_status_narrow(void) {
          case _SYSTEM:
              oled_write_ln_P(PSTR("Sys"), false);
              break;
+         case _QWERTY_GAMING:
+             oled_write_ln_P(PSTR("Game"), false);
          default:
              oled_write_ln_P(PSTR("Undf"), false);
      }
@@ -280,8 +307,8 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case MT(MOD_LALT, KC_S):
         case MT(MOD_LGUI, KC_A):
         case MT(MOD_RALT, KC_L):
-        case MT(MOD_RGUI, KC_SCLN):  // Fixed: KC_SCLN not KC_SEMICOLON
-            return TAPPING_TERM + 100;  // 200ms + 1000ms = 1200ms total
+        case MT(MOD_RGUI, KC_SCLN):
+            return TAPPING_TERM + 100;
         default:
             return TAPPING_TERM;
     }

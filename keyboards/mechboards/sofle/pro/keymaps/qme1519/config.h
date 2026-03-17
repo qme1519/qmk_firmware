@@ -27,6 +27,7 @@
 #define SPLIT_WPM_ENABLE
 
 // Tap-Hold Configuration
+#define TAPPING_TERM 175
 #define TAPPING_TERM_PER_KEY  // Enable per-key tapping term customization
 
 // RGB Matrix Configuration
